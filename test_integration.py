@@ -1,5 +1,5 @@
 """
-Integration test for the complete housing prices prediction pipeline.
+Integration test for the complete housing prices prediction pipeline
 """
 
 import sys
