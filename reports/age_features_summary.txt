@@ -1,0 +1,11 @@
+==================================================
+AGE-RELATED FEATURES CORRELATION WITH SALEPRICE
+==================================================
+HouseAge       : -0.5234
+RemodAge       : -0.5091
+GarageAge      : -0.4871
+
+Insights:
+- HouseAge correlation: -0.5234
+- Newer houses generally sell for higher prices
+- Recent remodels positively impact price

@@ -1,0 +1,35 @@
+# Core Data Science Libraries
+pandas>=1.5.0
+numpy>=1.21.0
+scikit-learn>=1.1.0
+
+# Visualization
+matplotlib>=3.5.0
+seaborn>=0.11.0
+
+# Statistical Analysis
+scipy>=1.9.0
+
+# Model Persistence
+joblib>=1.1.0
+
+# Development and Testing (optional)
+jupyter>=1.0.0
+ipykernel>=6.15.0
+pytest>=7.0.0
+pytest-cov>=4.0.0
+
+# API and Deployment
+fastapi>=0.95.0
+uvicorn[standard]>=0.20.0
+python-multipart>=0.0.6
+
+# Command Line Interface (optional)
+argparse  # Built-in with Python
+
+# Additional utilities
+tqdm>=4.64.0  # Progress bars
+pydantic>=1.10.0  # Data validation for API
+
+# System dependencies (for Docker)
+curl  # For health checks

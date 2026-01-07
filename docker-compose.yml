@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # Housing Prices Prediction API
+  housing-api:
+    build: .
+    container_name: housing-prediction-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/app/models
+      - ./data:/app/data
+      - ./reports:/app/reports
+    environment:
+      - MODEL_PATH=/app/models/ridge_model.pkl
+      - FEATURE_ENGINEER_PATH=/app/models/feature_engineer.pkl
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Jupyter Notebook for development
+  jupyter:
+    build: .
+    container_name: housing-jupyter
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./:/app
+      - ./notebooks:/app/notebooks
+    command: >
+      bash -c "pip install jupyter && 
+               jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token=''"
+    restart: unless-stopped
+
+  # Training service (optional)
+  training:
+    build: .
+    container_name: housing-training
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./reports:/app/reports
+      - ./experiments:/app/experiments
+    command: >
+      bash -c "python src/train.py --tune-hyperparams --save-plots"
+    profiles:
+      - training
+
+networks:
+  default:
+    name: housing-prediction-network

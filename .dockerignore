@@ -1,0 +1,66 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+pip-log.txt
+pip-delete-this-directory.txt
+.tox
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git
+.mypy_cache
+.pytest_cache
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data files (optional - uncomment if you don't want to copy large data files)
+# data/raw/*.csv
+# data/processed/*.csv
+
+# Models (optional - uncomment if you don't want to copy trained models)
+# models/*.pkl
+
+# Reports and outputs
+reports/*.png
+reports/*.pdf
+experiments/*.json
+
+# Jupyter
+.ipynb_checkpoints
+
+# Documentation
+docs/_build/
+
+# Tests
+.pytest_cache/
+tests/
+
+# Temporary files
+*.tmp
+*.temp
