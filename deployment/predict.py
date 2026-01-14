@@ -13,13 +13,12 @@ import numpy as np
 import joblib
 from pathlib import Path
 from typing import Dict, Any, Optional
-
-# Add src to path for imports
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
-
 from data_processing import DataProcessor
 from feature_engineering import FeatureEngineer
 from utils import validate_file_exists, print_data_summary
+
+# Add src to path for imports
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 
 class HousingPricePredictor:
@@ -81,7 +80,8 @@ class HousingPricePredictor:
             df_processed, 
             target_column='SalePrice' if 'SalePrice' in df_processed.columns else 'dummy_target',
             apply_log_target=False,  # Don't transform target for inference
-            scale_features=True
+            scale_features=True,
+            fit_scaler=False  # Use trained scaler for inference
         )
         
         # Remove target column if it exists
@@ -91,6 +91,20 @@ class HousingPricePredictor:
             df_engineered = df_engineered.drop(columns=['dummy_target'])
         if 'SalePrice_log' in df_engineered.columns:
             df_engineered = df_engineered.drop(columns=['SalePrice_log'])
+        
+        # Align columns with those used during model training
+        # Add missing columns with 0 (for one-hot encoded features) and reorder
+        if self.feature_engineer.feature_columns:
+            expected_columns = [col for col in self.feature_engineer.feature_columns 
+                               if col not in ['SalePrice', 'dummy_target', 'SalePrice_log']]
+            
+            # Add missing columns with 0
+            for col in expected_columns:
+                if col not in df_engineered.columns:
+                    df_engineered[col] = 0
+            
+            # Reorder columns to match training data
+            df_engineered = df_engineered[expected_columns]
         
         return df_engineered
     

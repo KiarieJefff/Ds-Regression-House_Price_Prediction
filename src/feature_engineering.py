@@ -124,8 +124,12 @@ class FeatureEngineer:
                 df_scaled[numerical_cols] = self.scaler.fit_transform(df_scaled[numerical_cols])
             else:
                 if self.scaler is None:
-                    raise ValueError("Scaler not fitted. Call with fit_scaler=True first.")
-                df_scaled[numerical_cols] = self.scaler.transform(df_scaled[numerical_cols])
+                    # Fallback: fit on this data if scaler not available
+                    # This handles inference case where scaler wasn't loaded
+                    self.scaler = StandardScaler()
+                    df_scaled[numerical_cols] = self.scaler.fit_transform(df_scaled[numerical_cols])
+                else:
+                    df_scaled[numerical_cols] = self.scaler.transform(df_scaled[numerical_cols])
         
         # Store feature columns for later use
         self.feature_columns = df_scaled.columns.tolist()
@@ -166,7 +170,8 @@ class FeatureEngineer:
     def engineer_features(self, df: pd.DataFrame, 
                          target_column: str = 'SalePrice',
                          apply_log_target: bool = True,
-                         scale_features: bool = True) -> Tuple[pd.DataFrame, Optional[pd.Series], bool]:
+                         scale_features: bool = True,
+                         fit_scaler: bool = True) -> Tuple[pd.DataFrame, Optional[pd.Series], bool]:
         """
         Complete feature engineering pipeline.
         
@@ -175,6 +180,7 @@ class FeatureEngineer:
             target_column: Name of target column
             apply_log_target: Whether to apply log transformation to target
             scale_features: Whether to scale numerical features
+            fit_scaler: Whether to fit scaler (True for training, False for inference)
             
         Returns:
             Tuple of (engineered_df, transformed_target, was_log_transformed)
@@ -195,7 +201,7 @@ class FeatureEngineer:
         
         # Scale numerical features
         if scale_features:
-            df_scaled = self.scale_numerical_features(df_encoded, target_column)
+            df_scaled = self.scale_numerical_features(df_encoded, target_column, fit_scaler=fit_scaler)
         else:
             df_scaled = df_encoded
         

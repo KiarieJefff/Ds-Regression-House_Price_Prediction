@@ -94,9 +94,12 @@ class DataProcessor:
         
         # Handle electrical (true missing value)
         if 'Electrical' in df_processed.columns and df_processed['Electrical'].isnull().sum() > 0:
-            df_processed['Electrical'] = df_processed['Electrical'].fillna(
-                df_processed['Electrical'].mode()[0]
-            )
+            mode_val = df_processed['Electrical'].mode()
+            if mode_val.size > 0:
+                df_processed['Electrical'] = df_processed['Electrical'].fillna(mode_val[0])
+            else:
+                # If all values are NaN, use a default value
+                df_processed['Electrical'] = df_processed['Electrical'].fillna('SBrkr')
         
         # Handle LotFrontage (neighborhood-based imputation)
         if 'LotFrontage' in df_processed.columns and 'Neighborhood' in df_processed.columns:
