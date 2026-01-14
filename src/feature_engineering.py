@@ -33,6 +33,7 @@ class FeatureEngineer:
     def encode_ordinal_features(self, df: pd.DataFrame) -> pd.DataFrame:
         """
         Encode ordinal categorical features using domain-consistent mappings.
+        Unknown values are ignored (kept as-is).
         
         Args:
             df: Input DataFrame
@@ -49,13 +50,15 @@ class FeatureEngineer:
         
         for col in quality_features:
             if col in df_encoded.columns:
-                df_encoded[col] = df_encoded[col].map(self.ordinal_mappings['quality'])
+                df_encoded[col] = df_encoded[col].map(
+                    self.ordinal_mappings['quality']
+                ).fillna(df_encoded[col])
         
         # Apply basement exposure mapping
         if 'BsmtExposure' in df_encoded.columns:
             df_encoded['BsmtExposure'] = df_encoded['BsmtExposure'].map(
                 self.ordinal_mappings['basement_exposure']
-            )
+            ).fillna(df_encoded['BsmtExposure'])
         
         # Apply basement finish mapping
         basement_finish_features = ['BsmtFinType1', 'BsmtFinType2']
@@ -63,13 +66,14 @@ class FeatureEngineer:
             if col in df_encoded.columns:
                 df_encoded[col] = df_encoded[col].map(
                     self.ordinal_mappings['basement_finish']
-                )
+                ).fillna(df_encoded[col])
         
         return df_encoded
     
     def encode_nominal_features(self, df: pd.DataFrame, drop_first: bool = True) -> pd.DataFrame:
         """
         Encode nominal categorical features using one-hot encoding.
+        Unknown values are ignored (treated as a separate category).
         
         Args:
             df: Input DataFrame
@@ -87,7 +91,8 @@ class FeatureEngineer:
             df_encoded = pd.get_dummies(
                 df_encoded, 
                 columns=nominal_cols, 
-                drop_first=drop_first
+                drop_first=drop_first,
+                dummy_na=False
             )
         
         return df_encoded
